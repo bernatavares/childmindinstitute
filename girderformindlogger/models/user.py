@@ -708,3 +708,17 @@ class User(AccessControlledModel):
             raise AccessException('Login failed.')
         else:
             return(True)
+
+    def updateUserName(self, user, userName, save=True):
+        """
+        Change a user's username
+        
+        :param user: The user whose username to change.
+        :param userName: the new userName to be stored
+        """
+
+        if len(userName) > 0:
+            user['login'] = userName
+        else:
+            raise Exception('username can\'t be empty')
+        self.save(user)
