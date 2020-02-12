@@ -56,6 +56,7 @@ class User(Resource):
         self.route('POST', (), self.createUser)
         self.route('PUT', (':id',), self.updateUser)
         self.route('PUT', ('password',), self.changePassword)
+        self.route('PUT', ('username',), self.changeUserName)
         self.route('PUT', (':id', 'password'), self.changeUserPassword)
         self.route('GET', ('password', 'temporary', ':id'),
                    self.checkTemporaryPassword)
@@ -952,6 +953,19 @@ class User(Resource):
             },
             'message': 'Temporary access token is valid.'
         }
+
+    @access.user
+    @autoDescribeRoute(
+        Description('Change your username.')
+        .param('username', 'Your new username.')
+        .errorResponse(('You are not logged in.'), 401)
+    )
+    def changeUserName(self, username):
+        user = self.getCurrentUser()
+        
+        self._model.updateUserName(user, username)
+
+        return {'message': 'Username changed.'}
 
     @access.public
     @autoDescribeRoute(
